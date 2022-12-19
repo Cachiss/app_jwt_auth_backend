@@ -1,7 +1,7 @@
 const router = require('express').Router();
 
 router.get('/', (req, res) => {
-    res.send('<h1> Hello world! </h1>');
+    res.send('<h1> Este es el backend de jwt app </h1>');
 });
 
 
