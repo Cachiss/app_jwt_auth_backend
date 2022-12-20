@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
 const dotenv = require('dotenv');
+const cors = require('cors');
 
 const routes = require('./routes/index.routes');
 const apiV1Routes = require('./api/v1/api_v1.routes');
@@ -12,6 +13,9 @@ const port = process.env.APP_PORT || 3000;
 // Options
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(cors({
+	origin: process.env.APP_URL,
+}));
 
 // Routes
 app.use(routes);
