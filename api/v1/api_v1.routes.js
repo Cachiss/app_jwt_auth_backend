@@ -2,6 +2,7 @@ const router = require("express").Router();
 const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
 const User = require("../../db/models/User");
+const Todo = require("../../db/models/Todo");
 const verifyToken = require('../../middlewares/auth.middleware')
 
 router.get("/", (req, res) => {
@@ -53,5 +54,80 @@ router.get("/getUser", verifyToken, (req, res) => {
 	const user = req.user;
 	res.status(200).json(user)
 });
+
+// actualizar usuario
+router.put("/updateUser/:id", verifyToken, async (req, res) => {
+  const { name, email, password, phone } = req.body;
+  const { id } = req.params;
+
+
+  // actualizar usuario
+  await User.findByIdAndUpdate(id, {
+    name,
+    email,
+    password,
+    phone,
+  });
+  res.status(200).json({ message: "User updated" });
+});
+
+router.delete("/deleteUser/:id", verifyToken, async (req, res) => {
+  const { id } = req.params;
+  await User.findByIdAndDelete(id);
+  res.status(200).json({ message: "User deleted" });
+});
+
+router.get("/users", verifyToken, async (req, res) => {
+  const users = await User.find();
+  res.status(200).json(users);
+});
+
+
+// todo methods 
+router.post('/createTodo', verifyToken, async (req, res) => {
+  const { title, description, isCompleted, idUser } = req.body;
+  const todo = new Todo({
+    title,
+    description,
+    isCompleted,
+    idUser
+  });
+  await todo.save();
+  res.status(201).json({
+    message: "Todo created",
+    todo
+  });
+});
+
+router.get('/todos', verifyToken, async (req, res) => {
+  const todos = await Todo.find();
+  res.status(200).json(todos);
+});
+
+router.get('/todos/:id', verifyToken, async (req, res) => {
+  const { id } = req.params;
+  const todo = await Todo.findById(id);
+  res.status(200).json(todo);
+});
+
+router.put('/updateTodo/:id', verifyToken, async (req, res) => {
+  const { title, description, isCompleted } = req.body;
+  const { id } = req.params;
+
+  // actualizar todo
+  await Todo.findByIdAndUpdate(id, {
+    title,
+    description,
+    isCompleted,
+  });
+  res.status(200).json({ message: "Todo updated" });
+});
+
+router.delete('/deleteTodo/:id', verifyToken, async (req, res) => {
+  const { id } = req.params;
+  await Todo.findByIdAndDelete(id);
+  res.status(200).json({ message: "Todo deleted" });
+});
+
 
 module.exports = router;
