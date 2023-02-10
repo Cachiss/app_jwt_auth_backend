@@ -4,7 +4,6 @@ const bcrypt = require('bcrypt');
 const dotenv = require('dotenv');
 
 dotenv.config();
-connectDb();
 
 const userSchema = new mongoose.Schema({
     name: {
