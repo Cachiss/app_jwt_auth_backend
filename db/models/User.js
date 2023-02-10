@@ -20,6 +20,12 @@ const userSchema = new mongoose.Schema({
         required: true,
     },
     phone: String,
+    todos: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Todo',
+        }
+    ]
 });
 
 // Para que encripte la contraseña antes de crear el usuario o actualizarlo

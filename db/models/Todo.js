@@ -19,8 +19,7 @@ const todoSchema = new mongoose.Schema({
         default: false
     },
     idUser: {
-        type: Array,
-        required: true,
+        type: mongoose.Schema.Types.ObjectId,
     }
 });
 

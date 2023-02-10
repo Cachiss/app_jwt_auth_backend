@@ -56,23 +56,17 @@ router.get("/getUser", verifyToken, (req, res) => {
 });
 
 // actualizar usuario
-router.put("/updateUser/:id", verifyToken, async (req, res) => {
+router.put("/updateUser", verifyToken, async (req, res) => {
   const { name, email, password, phone } = req.body;
-  const { id } = req.params;
-
+  const id = req.user._id;
 
   // actualizar usuario
-  await User.findByIdAndUpdate(id, {
-    name,
-    email,
-    password,
-    phone,
-  });
+  await User.findByIdAndUpdate(id, req.body);
   res.status(200).json({ message: "User updated" });
 });
 
-router.delete("/deleteUser/:id", verifyToken, async (req, res) => {
-  const { id } = req.params;
+router.delete("/deleteUser", verifyToken, async (req, res) => {
+  const id = req.user._id;
   await User.findByIdAndDelete(id);
   res.status(200).json({ message: "User deleted" });
 });
@@ -85,12 +79,12 @@ router.get("/users", verifyToken, async (req, res) => {
 
 // todo methods 
 router.post('/createTodo', verifyToken, async (req, res) => {
-  const { title, description, isCompleted, idUser } = req.body;
+  const { title, description, isCompleted } = req.body;
   const todo = new Todo({
     title,
     description,
     isCompleted,
-    idUser
+    idUser: req.user._id
   });
   await todo.save();
   res.status(201).json({
@@ -104,15 +98,15 @@ router.get('/todos', verifyToken, async (req, res) => {
   res.status(200).json(todos);
 });
 
-router.get('/todos/:id', verifyToken, async (req, res) => {
-  const { id } = req.params;
-  const todo = await Todo.findById(id);
-  res.status(200).json(todo);
+router.get('/todosUser', verifyToken, async (req, res) => {
+  const idUser = req.user._id;
+  const todos = await Todo.find({idUser});
+  res.status(200).json(todos);
 });
 
-router.put('/updateTodo/:id', verifyToken, async (req, res) => {
+router.put('/updateTodo', verifyToken, async (req, res) => {
   const { title, description, isCompleted } = req.body;
-  const { id } = req.params;
+  const { id } = req.query;
 
   // actualizar todo
   await Todo.findByIdAndUpdate(id, {
@@ -124,7 +118,7 @@ router.put('/updateTodo/:id', verifyToken, async (req, res) => {
 });
 
 router.delete('/deleteTodo/:id', verifyToken, async (req, res) => {
-  const { id } = req.params;
+  const { id } = req.query;
   await Todo.findByIdAndDelete(id);
   res.status(200).json({ message: "Todo deleted" });
 });
