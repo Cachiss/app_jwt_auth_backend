@@ -56,29 +56,30 @@ router.get("/getUser", verifyToken, (req, res) => {
 });
 
 // actualizar usuario
-router.put("/updateUser", verifyToken, async (req, res) => {
+router.put("/updateUser/:id", async (req, res) => {
   const { name, email, password, phone } = req.body;
-  const id = req.user._id;
+  const id = req.params.id;
 
   // actualizar usuario
-  await User.findByIdAndUpdate(id, req.body);
+  const user = await User.findByIdAndUpdate(id, req.body);
+  await user.save();
   res.status(200).json({ message: "User updated" });
 });
 
-router.delete("/deleteUser", verifyToken, async (req, res) => {
-  const id = req.user._id;
+router.delete("/deleteUser", async (req, res) => {
+  const id = req.body._id;
   await User.findByIdAndDelete(id);
   res.status(200).json({ message: "User deleted" });
 });
 
-router.get("/users", verifyToken, async (req, res) => {
+router.get("/users", async (req, res) => {
   const users = await User.find();
   res.status(200).json(users);
 });
 
 
 // todo methods 
-router.post('/createTodo', verifyToken, async (req, res) => {
+router.post('/createTodo', async (req, res) => {
   const { title, description, isCompleted } = req.body;
   const todo = new Todo({
     title,
