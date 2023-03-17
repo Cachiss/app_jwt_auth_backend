@@ -41,18 +41,6 @@ userSchema.pre('save', async function (next) {
         throw new Error(error); // Para que no se guarde el usuario
     }
 });
-userSchema.pre('update', async function (next) {
-    try{
-        const salt = await bcrypt.genSalt(parseInt(process.env.BCRYPT_SALT_ROUNDS)); 
-        const hashedPassword = await bcrypt.hash(this.password, salt);
-        this.password = hashedPassword;
-        next();
-    }
-    catch(error){
-        console.log(error);
-        throw new Error(error); // Para que no se guarde el usuario
-    }
-});
 
 userSchema.methods.isValidPassword = async function (password) {
     try {
